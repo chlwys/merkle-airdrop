@@ -23,8 +23,6 @@ async function main() {
     const Distributor = await ethers.getContractFactory("MerkleDistributor");
     const distributor = await Distributor.deploy("0x4AF2198602DfAB370Cb7d16aD0AA8c88dFcb2660", root);
     await distributor.deployed();
-
-
     
   
     console.log("Deploying contracts with the account:", deployer.address);

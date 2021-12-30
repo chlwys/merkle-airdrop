@@ -71,6 +71,12 @@ describe("MerkleDistributor", function () {
 
     const root = merkleTree.getHexRoot();
 
+    // recreating proof
+    const leaf = elements[3];
+    const proof = merkleTree.getHexProof(leaf);
+    console.log(proof);
+    console.log(root);
+
     // Deploy contract
     const Distributor = await ethers.getContractFactory("MerkleDistributor");
     const distributor = await Distributor.deploy(tokenAddress,root);
@@ -78,7 +84,7 @@ describe("MerkleDistributor", function () {
 
     // Attempt to claim and verify success
     await expect(
-      distributor.claim(0, users[3].address, users[3].amount, [])
+      distributor.claim(users[3].index, users[3].address, users[3].amount, proof)
     ).to.be.revertedWith("Invalid proof.");
   });
 });

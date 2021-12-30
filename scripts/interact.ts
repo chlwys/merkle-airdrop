@@ -5,15 +5,6 @@ import keccak256 from "keccak256";
 
 async function main () {
     // Our code will go here
-
-    // Set up an ethers contract, representing our deployed Box instance
-    const address = '0xff9Ad94c359bB29259A89b632f347D31b344083f';
-    const Box = await ethers.getContractFactory('MerkleDistributor');
-    const box = await Box.attach(address);
-
-    const value = await box.isClaimed(4);
-    console.log('isClaimed ', value.toString());
-
     const users = require('../trees/users.json');
 
     const elements = users.map((x: { index: any; address: any; amount: any; }) =>
@@ -26,8 +17,20 @@ async function main () {
 
     const leaf = elements[4];
     const proof = merkleTree.getHexProof(leaf);
+    console.log('printing proof')
+    console.log(proof);
 
-    console.log(users[4].address);
+    // Set up an ethers contract, representing our deployed Box instance
+    const address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+    const Box = await ethers.getContractFactory('MerkleDistributor');
+    const box = await Box.attach(address);
+
+    const value = await box.isClaimed(4);
+    console.log('isClaimed ', value.toString());
+
+
+    console.log('proof :');
+    console.log(proof);
 
     await box.claim(users[4].index, users[4].address, users[4].amount, proof);
 

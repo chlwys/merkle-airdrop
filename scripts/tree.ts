@@ -13,16 +13,28 @@ const users = [
 ];
 
 
- const elements = users.map((x) =>
-    utils.solidityKeccak256(["address", "uint256"], [x.address, x.amount]));
+const elements = users.map((x: { index: any; address: any; amount: any; }) =>
+utils.solidityKeccak256(["uint256", "address", "uint256"], [x.index, x.address, x.amount])
+); 
 
 //console.log(elements);
 
- const merkleTree = new MerkleTree(elements, keccak256, { sort: true });
+const merkleTree = new MerkleTree(elements, keccak256, { sort: true });
 
 //console.log(merkleTree);
 
- const root = merkleTree.getHexRoot();
+const root = merkleTree.getHexRoot();
+
+const proofers = [merkleTree.getHexProof(elements[0])];
+
+for (let i = 1; i < users.length; i += 1) {
+    const leaf = elements[i];
+    const proof = merkleTree.getHexProof(leaf);
+    console.log('proof of ', i);
+    console.log(proof);
+    proofers.push(proof)
+}
+
 
 const fs = require('fs');
 
@@ -52,6 +64,15 @@ fs.writeFile("trees/elements.json", JSON.stringify(elements), (err : any) => {
     }
     });
 fs.writeFile("trees/users.json", JSON.stringify(users), (err : any) => {
+    if (err)
+        console.log(err);
+    else {
+        console.log("File written successfully\n");
+        console.log("The written has the following contents:");
+    }
+    });
+
+fs.writeFile("trees/proofs.json", JSON.stringify(proofers), (err : any) => {
     if (err)
         console.log(err);
     else {
